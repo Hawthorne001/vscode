@@ -4119,7 +4119,7 @@ export class FileCoverage implements vscode.FileCoverage {
 		public statementCoverage: vscode.TestCoverageCount,
 		public branchCoverage?: vscode.TestCoverageCount,
 		public declarationCoverage?: vscode.TestCoverageCount,
-		public testItem?: vscode.TestItem,
+		public fromTests: vscode.TestItem[] = [],
 	) {
 	}
 }
@@ -4449,6 +4449,20 @@ export enum ChatLocation {
 	Editor = 4,
 }
 
+export class ChatRequestEditorData implements vscode.ChatRequestEditorData {
+	constructor(
+		readonly document: vscode.TextDocument,
+		readonly selection: vscode.Selection,
+		readonly wholeRange: vscode.Range,
+	) { }
+}
+
+export class ChatRequestNotebookData implements vscode.ChatRequestNotebookData {
+	constructor(
+		readonly cell: vscode.TextDocument
+	) { }
+}
+
 export enum LanguageModelChatMessageRole {
 	User = 1,
 	Assistant = 2,
@@ -4471,7 +4485,7 @@ export class LanguageModelFunctionResultPart implements vscode.LanguageModelChat
 export class LanguageModelChatMessage implements vscode.LanguageModelChatMessage {
 
 	static User(content: string | LanguageModelFunctionResultPart, name?: string): LanguageModelChatMessage {
-		const value = new LanguageModelChatMessage(LanguageModelChatMessageRole.User, '', name);
+		const value = new LanguageModelChatMessage(LanguageModelChatMessageRole.User, typeof content === 'string' ? content : '', name);
 		value.content2 = content;
 		return value;
 	}
